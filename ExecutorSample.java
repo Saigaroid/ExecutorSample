@@ -71,10 +71,10 @@ public class ExecutorSample {
         });
     }
 
-    public static <T1, T2, T3> void runAsync3(final Callable<T1> task1,
-                                              final Callable<T2> task2,
-                                              final Callable<T3> task3,
-                                              final ResultCallback3<T1, T2, T3> callback) {
+    public static <T1, T2, T3> void runAsync(final Callable<T1> task1,
+                                             final Callable<T2> task2,
+                                             final Callable<T3> task3,
+                                             final ResultCallback3<T1, T2, T3> callback) {
         final Object[] results = new Object[3];
         final CountDownLatch latch = new CountDownLatch(3);
 
