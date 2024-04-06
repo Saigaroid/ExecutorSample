@@ -39,36 +39,14 @@ public class ExecutorSample {
         executor.submit(() -> {
             try {
                 latch.await();
-                callback.onResult(
-                        castOrNull(results[0]),
-                        castOrNull(results[1])
-                );
+                callback.onResult(castOrNull(results[0]), castOrNull(results[1]));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         });
 
-        // task1
-        executor.submit(() -> {
-            try {
-                results[0] = task1.call();
-            } catch (Exception e) {
-                results[0] = null;
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        // task2
-        executor.submit(() -> {
-            try {
-                results[1] = task2.call();
-            } catch (Exception e) {
-                results[1] = null;
-            } finally {
-                latch.countDown();
-            }
-        });
+        executeTaskWithResult(task1, 0, results, latch);
+        executeTaskWithResult(task2, 1, results, latch);
     }
 
     public static <T1, T2, T3> void runAsync(final Callable<T1> task1,
@@ -81,44 +59,26 @@ public class ExecutorSample {
         executor.submit(() -> {
             try {
                 latch.await();
-                callback.onResult(
-                        castOrNull(results[0]),
-                        castOrNull(results[1]),
-                        castOrNull(results[2])
-                );
+                callback.onResult(castOrNull(results[0]), castOrNull(results[1]), castOrNull(results[2]));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         });
 
-        // task1
-        executor.submit(() -> {
-            try {
-                results[0] = task1.call();
-            } catch (Exception e) {
-                results[0] = null;
-            } finally {
-                latch.countDown();
-            }
-        });
+        executeTaskWithResult(task1, 0, results, latch);
+        executeTaskWithResult(task2, 1, results, latch);
+        executeTaskWithResult(task3, 2, results, latch);
+    }
 
-        // task2
+    private static <T> void executeTaskWithResult(final Callable<T> task,
+                                                  final int index,
+                                                  final Object[] results,
+                                                  final CountDownLatch latch) {
         executor.submit(() -> {
             try {
-                results[1] = task2.call();
+                results[index] = task.call();
             } catch (Exception e) {
-                results[1] = null;
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        // task3
-        executor.submit(() -> {
-            try {
-                results[2] = task3.call();
-            } catch (Exception e) {
-                results[2] = null;
+                results[index] = null;
             } finally {
                 latch.countDown();
             }
